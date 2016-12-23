@@ -121,7 +121,7 @@ EthRPC.prototype.sendAsync = function sendAsync(payload, cb) {
     var responseObject = response || {};
 
     if (err || responseObject.error) {
-      var payloadErrorMessage = '[ethjs-rpc] ' + (responseObject.error && 'rpc' || '') + ' error with payload ' + JSON.stringify(payload, null, self.options.jsonSpace) + ' ' + (err || JSON.stringify(response.error, null, self.options.jsonSpace));
+      var payloadErrorMessage = '[ethjs-rpc] ' + (responseObject.error && 'rpc' || '') + ' error with payload ' + JSON.stringify(payload, null, self.options.jsonSpace) + ' ' + (err || JSON.stringify(responseObject.error, null, self.options.jsonSpace));
       return cb(new Error(payloadErrorMessage), null);
     }
 
