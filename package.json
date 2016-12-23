@@ -1,7 +1,7 @@
 {
   "name": "ethjs-rpc",
   "version": "0.1.0",
-  "description": "A super simple module for querying the Ethereum RPC layer at a low level.",
+  "description": "A super simple module for querying the Ethereum RPC layer without formatting.",
   "main": "lib/index.js",
   "files": [
     "dist",
