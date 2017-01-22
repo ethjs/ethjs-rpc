@@ -117,12 +117,15 @@ function EthRPC(cprovider, options) {
 EthRPC.prototype.sendAsync = function sendAsync(payload, cb) {
   var self = this;
   self.idCounter = self.idCounter % self.options.max;
-  self.currentProvider.sendAsync(createPayload(payload, self.idCounter++), function (err, response) {
+  var parsedPayload = createPayload(payload, self.idCounter++);
+  self.currentProvider.sendAsync(parsedPayload, function (err, response) {
     var responseObject = response || {};
 
     if (err || responseObject.error) {
-      var payloadErrorMessage = '[ethjs-rpc] ' + (responseObject.error && 'rpc' || '') + ' error with payload ' + JSON.stringify(payload, null, self.options.jsonSpace) + ' ' + (err || JSON.stringify(responseObject.error, null, self.options.jsonSpace));
-      return cb(new Error(payloadErrorMessage), null);
+      var payloadErrorMessage = '[ethjs-rpc] ' + (responseObject.error && 'rpc' || '') + ' error with payload ' + JSON.stringify(parsedPayload, null, self.options.jsonSpace) + ' ' + (String(err) || JSON.stringify(responseObject.error, null, self.options.jsonSpace));
+      var payloadError = new Error(payloadErrorMessage);
+      payloadError.value = err || responseObject.error;
+      return cb(payloadError, null);
     }
 
     return cb(null, responseObject.result);
@@ -138,7 +141,7 @@ EthRPC.prototype.sendAsync = function sendAsync(payload, cb) {
  * @returns {Object} payload the completed payload object
  */
 function createPayload(data, id) {
-  return Object.assign({
+  return Object.assign({}, {
     id: id,
     jsonrpc: '2.0',
     params: []

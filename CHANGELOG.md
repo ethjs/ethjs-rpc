@@ -1,3 +1,7 @@
+# 0.1.2 -- louder errors
+
+1. Louder errors
+
 # 0.1.1 -- handle errors better
 
 1. Better error handling
