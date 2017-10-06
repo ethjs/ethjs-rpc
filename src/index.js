@@ -46,7 +46,7 @@ EthRPC.prototype.sendAsync = function sendAsync(payload, cb) {
       const responseObject = response || {};
 
       if (err || responseObject.error) {
-        const payloadErrorMessage = `[ethjs-rpc] ${(responseObject.error && 'rpc' || '')} error with payload ${JSON.stringify(parsedPayload, null, self.options.jsonSpace)} ${String(err) || (JSON.stringify(responseObject.error, null, self.options.jsonSpace))}`;
+        const payloadErrorMessage = `[ethjs-rpc] ${(responseObject.error && 'rpc' || '')} error with payload ${JSON.stringify(parsedPayload, null, self.options.jsonSpace)} ${err ? String(err) : (JSON.stringify(responseObject.error, null, self.options.jsonSpace))}`;
         const payloadError = new Error(payloadErrorMessage);
         payloadError.value = (err || responseObject.error);
         reject(payloadError);
