@@ -35,13 +35,12 @@ function EthRPC(cprovider, options) {
  * @param {Function} cb the async standard callback
  * @callback {Object|Array|Boolean|String} vary result instance output
  */
-EthRPC.prototype.sendAsync = function sendAsync(payload, cb) {
+EthRPC.prototype.sendAsync = function sendAsync(payload, callback) {
   const self = this;
-  const callback = cb || (() => {});
   self.idCounter = self.idCounter % self.options.max;
   const parsedPayload = createPayload(payload, self.idCounter++);
 
-  return new Promise((resolve, reject) => {
+  const promise = new Promise((resolve, reject) => {
     self.currentProvider.sendAsync(parsedPayload, (err, response) => {
       const responseObject = response || {};
 
@@ -50,13 +49,27 @@ EthRPC.prototype.sendAsync = function sendAsync(payload, cb) {
         const payloadError = new Error(payloadErrorMessage);
         payloadError.value = (err || responseObject.error);
         reject(payloadError);
-        return callback(payloadError, null);
+        return;
       }
 
       resolve(responseObject.result);
-      return callback(null, responseObject.result);
+      return;
     });
   });
+
+  if (callback) {
+    // connect promise resolve handlers to callback
+    promise.then((result) => {
+      callback(null, result);
+    }).catch((err) => {
+      callback(err);
+    });
+  } else {
+    // only return promise if no callback specified
+    return promise;
+  }
+
+  return undefined;
 };
 
 /**
