@@ -1,3 +1,7 @@
+# 0.1.9 -- added promises
+
+1. Fixed major callback / promise issue thanks to Kumavis!! (i.e. unhandled promise rejection swollowing errors)
+
 # 0.1.7 -- added promises
 
 1. Added promise support (why did I not do this before..)
