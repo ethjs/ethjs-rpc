@@ -98,5 +98,18 @@ describe('ethjs-rpc', () => {
         done();
       });
     });
+
+    it('should call the callback only once', (done) => {
+      const eth = new EthRPC(provider);
+      let callbackCalled = 0;
+      eth.sendAsync({ method: 'eth_accounts' }, () => {
+        callbackCalled++;
+        throw new Error('boom!');
+      });
+      setTimeout(() => {
+        assert.equal(callbackCalled, 1, 'callback called only once.');
+        done();
+      }, 200);
+    });
   });
 });
