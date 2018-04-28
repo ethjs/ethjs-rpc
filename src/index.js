@@ -1,3 +1,5 @@
+const promiseToCallback = require('promise-to-callback');
+
 module.exports = EthRPC;
 
 /**
@@ -59,17 +61,11 @@ EthRPC.prototype.sendAsync = function sendAsync(payload, callback) {
 
   if (callback) {
     // connect promise resolve handlers to callback
-    promise.then((result) => {
-      callback(null, result);
-    }).catch((err) => {
-      callback(err);
-    });
-  } else {
-    // only return promise if no callback specified
-    return promise;
+    return promiseToCallback(promise)(callback);
   }
 
-  return undefined;
+  // only return promise if no callback specified
+  return promise;
 };
 
 /**
