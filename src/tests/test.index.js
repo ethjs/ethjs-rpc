@@ -36,7 +36,7 @@ describe('ethjs-rpc', () => {
             assert.deepEqual(accounts3, accounts2);
             done();
           })
-          .catch((error) => console.log(error));
+          .catch((error) => console.log(error)); // eslint-disable-line
         });
       });
     });
