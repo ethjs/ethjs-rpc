@@ -99,4 +99,45 @@ describe('ethjs-rpc', () => {
       });
     });
   });
+
+  describe('sendAsync - error handling', () => {
+    // this test relies on disabling mocha's default handling of "uncaughtException"
+    // see https://github.com/mochajs/mocha/issues/2452
+
+    let uncaughtExceptionListeners;
+
+    before(() => {
+      // Stop Mocha from handling uncaughtExceptions.
+      uncaughtExceptionListeners = process.listeners('uncaughtException');
+      process.removeAllListeners('uncaughtException');
+    });
+
+    after(() => {
+      // Resume normal Mocha handling of uncaughtExceptions.
+      uncaughtExceptionListeners.forEach((listener) => {
+        process.on('uncaughtException', listener);
+      });
+    });
+
+    it('should call the callback only once', (done) => {
+      const eth = new EthRPC(provider);
+      const errorMessage = 'boom!';
+      let callbackCalled = 0;
+      let uncaughtException;
+
+      process.prependOnceListener('uncaughtException', (err) => {
+        uncaughtException = err;
+      });
+      eth.sendAsync({ method: 'eth_accounts' }, () => {
+        callbackCalled++;
+        throw new Error(errorMessage);
+      });
+
+      setTimeout(() => {
+        assert.equal(callbackCalled, 1, 'callback called only once.');
+        assert.equal(uncaughtException.message, errorMessage, 'saw expected uncaughtException');
+        done();
+      }, 200);
+    });
+  });
 });
